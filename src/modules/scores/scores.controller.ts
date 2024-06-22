@@ -27,6 +27,10 @@ export class ScoresController {
 
   @Get('employee-list-score')
   @ApiQuery({
+    name: 'keyword',
+    required: false,
+  })
+  @ApiQuery({
     required: false,
     name: 'page',
   })
@@ -35,10 +39,11 @@ export class ScoresController {
     name: 'limit',
   })
   async listEmployeeScore(
+    @Query('keyword') keyword: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
   ) {
-    return this.scoresService.getListEmployeeScores({ page, limit });
+    return this.scoresService.getListEmployeeScores({ page, limit }, keyword);
   }
 
   @Get('employee/:employeeId')

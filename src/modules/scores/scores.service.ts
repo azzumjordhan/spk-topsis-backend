@@ -48,10 +48,19 @@ export class ScoresService {
 
   async getListEmployeeScores(
     options: IPaginationOptions,
+    keyword: string,
   ): Promise<CustomPagination<EmployeeScoreList>> {
-    const data = this.repoService.scoreRepo
+    let query = this.repoService.scoreRepo
       .createQueryBuilder('score')
-      .leftJoinAndSelect('score.employee', 'employee')
+      .leftJoinAndSelect('score.employee', 'employee');
+
+    if (keyword && keyword != '') {
+      query = query.andWhere('employee.name ILIKE :filter', {
+        filter: `%${keyword}%`,
+      });
+    }
+
+    const data = query
       .select([
         'score.employeeId AS employeeId',
         'employee.name AS employeeName',
