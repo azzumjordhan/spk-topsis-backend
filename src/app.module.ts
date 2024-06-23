@@ -7,6 +7,7 @@ import { EmployeesModule } from './modules/employees/employees.module';
 import { CriteriaModule } from './modules/criteria/criteria.module';
 import { ScoresModule } from './modules/scores/scores.module';
 import { TopsisModule } from './modules/topsis/topsis.module';
+import { AuthModule } from './modules/auth/auth.module';
 import ormconfig from './database/ormconfig';
 
 @Module({
@@ -17,6 +18,7 @@ import ormconfig from './database/ormconfig';
     CriteriaModule,
     ScoresModule,
     TopsisModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
