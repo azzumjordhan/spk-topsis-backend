@@ -1,30 +1,28 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Param,
   Put,
   Query,
   DefaultValuePipe,
   ParseIntPipe,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 
 @ApiTags('User Module')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('')
-  async create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
-
   @Get()
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @ApiQuery({
     name: 'keyword',
     required: false,
@@ -46,11 +44,20 @@ export class UserController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  async findOne(@Param('id') id: string, @Request() req) {
+    const userJwt = req.user;
+    if (id === 'me') {
+      id = userJwt.id;
+    }
+
     return this.userService.getUserById(id);
   }
 
   @Put(':id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(id, updateUserDto);
   }

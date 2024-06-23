@@ -37,7 +37,7 @@ export class UserService {
 
     if (keyword && keyword != '') {
       query = query.andWhere('user.name ILIKE :filter', {
-        filter: `%${keyword}`,
+        filter: `%${keyword}%`,
       });
     }
 
@@ -57,7 +57,6 @@ export class UserService {
         'updatedAt',
       ],
     });
-    findUser.password = undefined;
 
     if (!findUser) {
       throw new HttpException(
@@ -69,6 +68,8 @@ export class UserService {
         HttpStatus.NOT_FOUND,
       );
     }
+
+    findUser.password = undefined;
 
     return findUser;
   }
