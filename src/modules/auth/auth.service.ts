@@ -53,7 +53,7 @@ export class AuthService {
         {
           status: HttpStatus.BAD_REQUEST,
           error_code: 'INVALID CREDENTIALS',
-          message: 'Wrong Password',
+          message: 'Invalid Credentials',
         },
         HttpStatus.BAD_REQUEST,
       );

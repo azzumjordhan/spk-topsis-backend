@@ -9,13 +9,17 @@ import {
   DefaultValuePipe,
   ParseIntPipe,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { ScoresService } from './scores.service';
 import { CreateScoreDto } from './dto/create-score.dto';
 import { UpdateScoreDto } from './dto/update-score.dto';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 
 @ApiTags('Scores Module')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('scores')
 export class ScoresController {
   constructor(private readonly scoresService: ScoresService) {}

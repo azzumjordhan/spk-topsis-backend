@@ -1,16 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { TopsisService } from './topsis.service';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 
 @ApiTags('Module Topsis')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('topsis')
 export class TopsisController {
   constructor(private readonly topsisService: TopsisService) {}
-
-  // @Get()
-  // async getResult() {
-  //   return this.topsisService.evaluasiHasil();
-  // }
 
   @Get('rank')
   async getRank() {

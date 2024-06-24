@@ -8,12 +8,16 @@ import {
   Query,
   DefaultValuePipe,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { CriteriaService } from './criteria.service';
 import { CreateCriterionDto } from './dto/create-criterion.dto';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 
 @ApiTags('Criteria Module')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('criteria')
 export class CriteriaController {
   constructor(private readonly criteriaService: CriteriaService) {}

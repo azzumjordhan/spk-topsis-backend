@@ -6,6 +6,7 @@ import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 import { User } from 'src/models/entities/user.entity';
 import { StatusUser } from './enum/status.enum';
 import { RoleUser } from './enum/role.enum';
+import { UpdateStatusUser } from './dto/update-status.dto';
 
 @Injectable()
 export class UserService {
@@ -74,9 +75,37 @@ export class UserService {
     return findUser;
   }
 
-  async update(id: string, data: UpdateUserDto) {
-    console.log(data);
-    return `This action updates a #${id} user`;
+  async update(id: string, data: UpdateUserDto, userId: string) {
+    const user = await this.getUserById(id);
+
+    if (user.id != userId) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error_code: 'BAD_REQUEST',
+          message: 'Tidak memiliki akses',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    await this.repoService.userRepo.update(
+      { id: user.id },
+      { name: data.name, password: data.password, email: data.email },
+    );
+
+    return await this.getUserById(id);
+  }
+
+  async updateStatus(id: string, payload: UpdateStatusUser) {
+    const user = await this.getUserById(id);
+
+    await this.repoService.userRepo.update(
+      { id: user.id },
+      { status: payload.status },
+    );
+
+    return await this.getUserById(user.id);
   }
 
   async getUserByEmail(email: string) {
