@@ -80,6 +80,6 @@ export class UserController {
     @Param('id') id: string,
     @Body() status: UpdateStatusUser,
   ) {
-    return this.userService.updateStatus(id, status);
+    return this.userService.updateStatusAndRole(id, status);
   }
 }

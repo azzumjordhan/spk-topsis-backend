@@ -89,20 +89,51 @@ export class UserService {
       );
     }
 
-    await this.repoService.userRepo.update(
-      { id: user.id },
-      { name: data.name, password: data.password, email: data.email },
-    );
+    const existingUser = await this.repoService.userRepo.findOne({
+      where: { email: data.email },
+    });
+
+    if (existingUser && existingUser.id !== user.id) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error_code: 'BAD_REQUEST',
+          message: 'EMAIL IS ALREADY REGISTERED',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (data.password !== '') {
+      await this.repoService.userRepo.update(
+        { id: user.id },
+        { name: data.name, password: data.password, email: data.email },
+      );
+    } else {
+      await this.repoService.userRepo.update(
+        { id: user.id },
+        { name: data.name, email: data.email },
+      );
+    }
 
     return await this.getUserById(id);
   }
 
-  async updateStatus(id: string, payload: UpdateStatusUser) {
+  async updateStatusAndRole(id: string, payload: UpdateStatusUser) {
     const user = await this.getUserById(id);
 
     await this.repoService.userRepo.update(
       { id: user.id },
-      { status: payload.status },
+      {
+        status:
+          payload.status.toLowerCase() === StatusUser.AKTIF
+            ? StatusUser.AKTIF
+            : StatusUser.TIDAK_AKTIF,
+        role:
+          payload.role.toLowerCase() === RoleUser.SUPER_ADMIN
+            ? RoleUser.SUPER_ADMIN
+            : RoleUser.ADMIN,
+      },
     );
 
     return await this.getUserById(user.id);
